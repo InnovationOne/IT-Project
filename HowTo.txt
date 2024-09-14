@@ -1,0 +1,7 @@
+Pet-Clinic starten:
+1. Docker starten!
+2. Datenbank starten: docker-compose --profile mysql up
+3. Projekt starten: mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+
+Datenbank abrufen:
+1. docker exec -it spring-petclinic-mysql-1 mysql -u petclinic -ppetclinic -D petclinic
