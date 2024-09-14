@@ -18,7 +18,7 @@ public class BaseEntity implements Serializable {
 	// Markiert das Feld 'id' als Primärschlüssel in der Datenbank
 	@Id
 	// Gibt an, dass der Wert von 'id' automatisch generiert werden soll
-  // GenerationType.IDENTITY lässt die Datenbank die ID generieren, z.B. durch Auto-Inkrement
+	// GenerationType.IDENTITY lässt die Datenbank die ID generieren, z.B. durch Auto-Inkrement
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
@@ -33,7 +33,7 @@ public class BaseEntity implements Serializable {
 	}
 
 	// Methode, um zu prüfen, ob das Objekt neu ist (d.h., ob es noch keine ID hat)
-  // Gibt true zurück, wenn 'id' null ist
+	// Gibt true zurück, wenn 'id' null ist
 	public boolean isNew() {
 		return this.id == null;
 	}

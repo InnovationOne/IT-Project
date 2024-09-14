@@ -1,18 +1,3 @@
-/*
- * Copyright 2012-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.springframework.samples.petclinic.vet;
 
 import java.util.List;
@@ -26,53 +11,66 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * @author Juergen Hoeller
- * @author Mark Fisher
- * @author Ken Krebs
- * @author Arjen Poutsma
- */
+// Der VetController ist ein Spring MVC Controller, der HTTP-Anfragen im Zusammenhang mit Tierärzten verarbeitet.
 @Controller
 class VetController {
 
 	private final VetRepository vetRepository;
 
+	// Konstruktor-Injektion des VetRepository
+	// Das Repository wird verwendet, um auf Tierarzt-Daten zuzugreifen.
 	public VetController(VetRepository clinicService) {
 		this.vetRepository = clinicService;
 	}
 
+	// Behandelt GET-Anfragen an "/vets.html".
+	// Zeigt eine paginierte Liste der Tierärzte an.
 	@GetMapping("/vets.html")
 	public String showVetList(@RequestParam(defaultValue = "1") int page, Model model) {
-		// Here we are returning an object of type 'Vets' rather than a collection of Vet
-		// objects so it is simpler for Object-Xml mapping
+		// Erzeugt eine Instanz von Vets, die eine Liste von Tierärzten enthält
 		Vets vets = new Vets();
+		// Holt die paginierte Liste von Tierärzten für die angegebene Seite
 		Page<Vet> paginated = findPaginated(page);
+		// Fügt die Tierärzte zur Vets-Liste hinzu
 		vets.getVetList().addAll(paginated.toList());
+		// Fügt Paginierungsinformationen und die Liste der Tierärzte dem Modell hinzu
 		return addPaginationModel(page, paginated, model);
 	}
 
+	// Fügt dem Modell Paginierungsinformationen und die Liste der Tierärzte hinzu
 	private String addPaginationModel(int page, Page<Vet> paginated, Model model) {
+		// Holt den Inhalt (Liste von Tierärzten) aus der paginierten Seite
 		List<Vet> listVets = paginated.getContent();
+		// Fügt die aktuelle Seite zum Modell hinzu
 		model.addAttribute("currentPage", page);
+		// Fügt die Gesamtanzahl der Seiten zum Modell hinzu
 		model.addAttribute("totalPages", paginated.getTotalPages());
+		// Fügt die Gesamtanzahl der Elemente (Tierärzte) zum Modell hinzu
 		model.addAttribute("totalItems", paginated.getTotalElements());
+		// Fügt die Liste der Tierärzte zum Modell hinzu
 		model.addAttribute("listVets", listVets);
+		// Gibt den Namen der View zurück
 		return "vets/vetList";
 	}
 
+	// Findet eine paginierte Liste von Tierärzten für die angegebene Seite.
 	private Page<Vet> findPaginated(int page) {
-		int pageSize = 5;
+		int pageSize = 5; // Anzahl der Elemente pro Seite
+		// Erstellt ein Pageable-Objekt mit der aktuellen Seite und der Seitengröße
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
+		// Ruft die paginierte Liste von Tierärzten aus dem Repository ab
 		return vetRepository.findAll(pageable);
 	}
 
+	// Behandelt GET-Anfragen an "/vets".
+	// Gibt eine Liste von Tierärzten als JSON oder XML zurück.
 	@GetMapping({ "/vets" })
 	public @ResponseBody Vets showResourcesVetList() {
-		// Here we are returning an object of type 'Vets' rather than a collection of Vet
-		// objects so it is simpler for JSon/Object mapping
+		// Erzeugt eine neue Instanz von Vets
 		Vets vets = new Vets();
+		// Fügt alle Tierärzte aus dem Repository zur Vets-Liste hinzu
 		vets.getVetList().addAll(this.vetRepository.findAll());
+		// Gibt das Vets-Objekt zurück, das automatisch in JSON oder XML serialisiert wird
 		return vets;
 	}
-
 }

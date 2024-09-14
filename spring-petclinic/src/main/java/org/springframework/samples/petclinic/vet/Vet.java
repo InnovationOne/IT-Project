@@ -1,18 +1,3 @@
-/*
- * Copyright 2012-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.springframework.samples.petclinic.vet;
 
 import java.util.ArrayList;
@@ -33,45 +18,51 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlElement;
 
-/**
- * Simple JavaBean domain object representing a veterinarian.
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Arjen Poutsma
- */
+// Die Klasse Vet repräsentiert einen Tierarzt in der Anwendung.
+// Sie erbt von Person und fügt zusätzliche Eigenschaften wie Spezialisierungen hinzu.
 @Entity
 @Table(name = "vets")
 public class Vet extends Person {
 
+	// Ein Set von Spezialisierungen, die diesem Tierarzt zugeordnet sind.
+	// Verwenden von @ManyToMany, da ein Tierarzt mehrere Spezialisierungen haben
+	// kann und eine Spezialisierung mehreren Tierärzten zugeordnet sein kann.
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
-			inverseJoinColumns = @JoinColumn(name = "specialty_id"))
+	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
 	private Set<Specialty> specialties;
 
+	// Gibt das interne Set von Spezialisierungen zurück.
+	// Initialisiert das Set bei Bedarf.
 	protected Set<Specialty> getSpecialtiesInternal() {
 		if (this.specialties == null) {
 			this.specialties = new HashSet<>();
 		}
+		// Gibt das Set von Spezialisierungen zurück.
 		return this.specialties;
 	}
 
+	// Setzt das interne Set von Spezialisierungen.
 	protected void setSpecialtiesInternal(Set<Specialty> specialties) {
 		this.specialties = specialties;
 	}
 
+	// Gibt eine unveränderliche Liste der Spezialisierungen zurück, sortiert nach
+	// dem Namen der Spezialisierung.
 	@XmlElement
 	public List<Specialty> getSpecialties() {
 		List<Specialty> sortedSpecs = new ArrayList<>(getSpecialtiesInternal());
+		// Sortiert die Liste der Spezialisierungen nach ihrem Namen
 		PropertyComparator.sort(sortedSpecs, new MutableSortDefinition("name", true, true));
+		// Gibt eine unveränderliche Liste zurück, um die Kapselung zu wahren
 		return Collections.unmodifiableList(sortedSpecs);
 	}
 
+	// Gibt die Anzahl der Spezialisierungen dieses Tierarztes zurück.
 	public int getNrOfSpecialties() {
 		return getSpecialtiesInternal().size();
 	}
 
+	// Fügt diesem Tierarzt eine neue Spezialisierung hinzu.
 	public void addSpecialty(Specialty specialty) {
 		getSpecialtiesInternal().add(specialty);
 	}

@@ -1,19 +1,3 @@
-/*
- * Copyright 2012-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.samples.petclinic.system;
 
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
@@ -23,31 +7,24 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.cache.configuration.MutableConfiguration;
 
-/**
- * Cache configuration intended for caches providing the JCache API. This configuration
- * creates the used cache for the application and enables statistics that become
- * accessible via JMX.
- */
+// Diese Klasse konfiguriert das Caching für die Anwendung
+// Sie erstellt einen Cache namens "vets" und aktiviert das Caching insgesamt
 @Configuration(proxyBeanMethods = false)
 @EnableCaching
 class CacheConfiguration {
 
+	//Definiert einen Bean, der den CacheManager anpasst
+	// Erstellt einen Cache mit dem Namen "vets" und der angegebenen Konfiguration
 	@Bean
 	public JCacheManagerCustomizer petclinicCacheConfigurationCustomizer() {
+		// Lambda-Ausdruck, der den Cache "vets" mit der spezifizierten Konfiguration erstellt
 		return cm -> cm.createCache("vets", cacheConfiguration());
 	}
 
-	/**
-	 * Create a simple configuration that enable statistics via the JCache programmatic
-	 * configuration API.
-	 * <p>
-	 * Within the configuration object that is provided by the JCache API standard, there
-	 * is only a very limited set of configuration options. The really relevant
-	 * configuration options (like the size limit) must be set via a configuration
-	 * mechanism that is provided by the selected JCache implementation.
-	 */
+	// Definiert die Cache-Konfiguration
+	// Aktiviert die Statistik für den Cache, um Monitoring zu ermöglichen
 	private javax.cache.configuration.Configuration<Object, Object> cacheConfiguration() {
+		// Erstellt eine neue MutableConfiguration und aktiviert die Statistiken
 		return new MutableConfiguration<>().setStatisticsEnabled(true);
 	}
-
 }
